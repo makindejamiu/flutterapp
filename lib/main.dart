@@ -10,7 +10,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Flutter Demo',
+        title: 'Demo Flutter App',
         theme: ThemeData(
           // This is the theme of your application.
           //
@@ -36,8 +36,31 @@ class RandomWords extends StatefulWidget {
 
 class _RandomWordsState extends State<RandomWords> {
   var wordPair = WordPair.random();
-  final suggestion = <WordPair>[];
-  final largeFormat = 
+  final _suggestions = <WordPair>[];
+  final largeFont = TextStyle(fontSize: 17);
+
+  Widget _buildSuggestions() {
+    return ListView.builder(
+        padding: EdgeInsets.all(16.0),
+        itemBuilder: /*1*/ (context, i) {
+          if (i.isOdd) {
+            print('Generating More Contents');
+            return Divider();
+          } /*2*/
+
+          final index = i ~/ 2; /*3*/
+          if (index >= _suggestions.length) {
+            _suggestions.addAll(generateWordPairs().take(10)); /*4*/
+          }
+          return _buildRow(_suggestions[index]);
+        });
+  }
+
+  Widget _buildRow(WordPair randWord) {
+    return Row(
+      children: [Text(randWord.asPascalCase, style: largeFont,)],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,17 +68,18 @@ class _RandomWordsState extends State<RandomWords> {
       appBar: AppBar(
         title: Text('Welcome'),
       ),
-      body: Center(
-        child: Text(wordPair.asPascalCase),
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.chat),
-        onPressed: () {
-          setState(() {
-            wordPair = WordPair.random();
-          });
-        },
-      ),
+      body: _buildSuggestions(),
+      // Center(
+      //   child: Text(wordPair.asPascalCase),
+      // ),
+      // floatingActionButton: FloatingActionButton(
+      //   child: Icon(Icons.chat),
+      //   onPressed: () {
+      //     setState(() {
+      //       wordPair = WordPair.random();
+      //     });
+      //   },
+      // ),
     );
   }
 }
