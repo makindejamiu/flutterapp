@@ -37,14 +37,17 @@ class RandomWords extends StatefulWidget {
 class _RandomWordsState extends State<RandomWords> {
   var wordPair = WordPair.random();
   final _suggestions = <WordPair>[];
+  final _favoriteWordPairs = Set<WordPair>();
   final largeFont = TextStyle(fontSize: 17);
+
+  ScrollController _listScrollController = ScrollController();
 
   Widget _buildSuggestions() {
     return ListView.builder(
+        controller: _listScrollController,
         padding: EdgeInsets.all(16.0),
         itemBuilder: /*1*/ (context, i) {
           if (i.isOdd) {
-            print('Generating More Contents');
             return Divider();
           } /*2*/
 
@@ -57,29 +60,58 @@ class _RandomWordsState extends State<RandomWords> {
   }
 
   Widget _buildRow(WordPair randWord) {
-    return Row(
-      children: [Text(randWord.asPascalCase, style: largeFont,)],
-    );
+    final alreadySaved = _favoriteWordPairs.contains(randWord);
+    return Container(
+        padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 5.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(randWord.asPascalCase, style: largeFont),
+            IconButton(
+              color: alreadySaved == true ? Colors.red : Colors.black,
+              icon: Icon(alreadySaved == true
+                  ? Icons.favorite
+                  : Icons.favorite_border_outlined),
+              onPressed: () {
+                setState(() {
+                  alreadySaved == false
+                      ? _favoriteWordPairs.add(randWord)
+                      : _favoriteWordPairs.remove(randWord);
+                });
+              },
+            )
+          ],
+        ));
   }
 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: AppBar(
-        title: Text('Welcome'),
+        title: Text('Random Word Pair'),
+        // centerTitle: true,
+        actions: [
+          Container(
+            padding: EdgeInsets.fromLTRB(0, 0, 30, 0),
+            child: IconButton(
+              iconSize: 40.0,
+              icon: Icon(
+                Icons.favorite,
+                color: Colors.red,
+              ),
+              onPressed: () {},
+            ),
+          )
+        ],
       ),
       body: _buildSuggestions(),
-      // Center(
-      //   child: Text(wordPair.asPascalCase),
-      // ),
-      // floatingActionButton: FloatingActionButton(
-      //   child: Icon(Icons.chat),
-      //   onPressed: () {
-      //     setState(() {
-      //       wordPair = WordPair.random();
-      //     });
-      //   },
-      // ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.arrow_upward),
+        onPressed: () {
+          // TODO: scroll the page to the top
+          _listScrollController.animateTo(0.0, duration: Duration(seconds: 10), curve: Curves.ease);
+        },
+      ),
     );
   }
 }
