@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:english_words/english_words.dart';
 
-void main() {
-  runApp(MyApp());
-}
+void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -21,11 +19,11 @@ class MyApp extends StatelessWidget {
           // or simply save your changes to "hot reload" in a Flutter IDE).
           // Notice that the counter didn't reset back to zero; the application
           // is not restarted.
-          primarySwatch: Colors.blue,
+          primaryColor: Colors.white,
         ),
-        home: RandomWords()
-        // RandomWords()
-        );
+        home: RandomWords(),
+        // routes: ,
+      );
   }
 }
 
@@ -37,7 +35,7 @@ class RandomWords extends StatefulWidget {
 class _RandomWordsState extends State<RandomWords> {
   var wordPair = WordPair.random();
   final _suggestions = <WordPair>[];
-  final _favoriteWordPairs = Set<WordPair>();
+  var _favoriteWordPairs = Set<WordPair>();
   final largeFont = TextStyle(fontSize: 17);
 
   ScrollController _listScrollController = ScrollController();
@@ -99,7 +97,9 @@ class _RandomWordsState extends State<RandomWords> {
                 Icons.favorite,
                 color: Colors.red,
               ),
-              onPressed: () {},
+              onPressed: () {
+                favoriteWordPairs();
+              },
             ),
           )
         ],
@@ -109,8 +109,47 @@ class _RandomWordsState extends State<RandomWords> {
         child: Icon(Icons.arrow_upward),
         onPressed: () {
           // TODO: scroll the page to the top
-          _listScrollController.animateTo(0.0, duration: Duration(seconds: 10), curve: Curves.ease);
+          _listScrollController.animateTo(0.0,
+              duration: Duration(seconds: 10), curve: Curves.ease);
         },
+      ),
+      bottomNavigationBar: BottomNavigationBar(items: 
+        [
+          BottomNavigationBarItem(label: 'Home', icon: Icon(Icons.home)),
+          BottomNavigationBarItem(label: 'Home', icon: Icon(Icons.home)),
+          BottomNavigationBarItem(label: 'Home', icon: Icon(Icons.home))
+        ],),
+    );
+  }
+
+  void favoriteWordPairs() {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        // NEW lines from here...
+        builder: (BuildContext context) {
+          final tiles = _favoriteWordPairs.map(
+            (WordPair pair) {
+              return ListTile(
+                title: Text(
+                  pair.asPascalCase,
+                  style: largeFont,
+                ),
+              );
+            },
+          );
+
+          final divided = ListTile.divideTiles(
+            context: context,
+            tiles: tiles,
+          ).toList();
+
+          return Scaffold(
+            appBar: AppBar(
+              title: Text('Saved Suggestions'),
+            ),
+            body: ListView(children: divided),
+          );
+        }, // ...to here.
       ),
     );
   }
