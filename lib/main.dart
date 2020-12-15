@@ -113,12 +113,6 @@ class _RandomWordsState extends State<RandomWords> {
               duration: Duration(seconds: 10), curve: Curves.ease);
         },
       ),
-      bottomNavigationBar: BottomNavigationBar(items: 
-        [
-          BottomNavigationBarItem(label: 'Home', icon: Icon(Icons.home)),
-          BottomNavigationBarItem(label: 'Home', icon: Icon(Icons.home)),
-          BottomNavigationBarItem(label: 'Home', icon: Icon(Icons.home))
-        ],),
     );
   }
 
